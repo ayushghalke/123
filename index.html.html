@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Goodbye</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #ffebee;
+            color: #d32f2f;
+            text-align: center;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            transition: background-color 1s;
+        }
+
+        .container {
+            max-width: 600px;
+            padding: 20px;
+            background-color: rgba(255, 255, 255, 0.8);
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            font-size: 2.5em;
+            margin-bottom: 20px;
+        }
+
+        p {
+            font-size: 1.2em;
+            line-height: 1.6;
+            margin-bottom: 30px;
+        }
+
+        .heart {
+            font-size: 3em;
+            margin: 20px 0;
+            cursor: pointer;
+            transition: transform 0.3s;
+        }
+
+        .heart:hover {
+            transform: scale(1.2);
+        }
+
+        .broken {
+            position: relative;
+        }
+
+        .broken:after {
+            content: '💔';
+            position: absolute;
+            left: 0;
+            right: 0;
+            opacity: 0;
+            transition: opacity 0.5s;
+        }
+
+        .broken.broken-heart:after {
+            opacity: 1;
+        }
+
+        .timer {
+            font-size: 1.5em;
+            margin: 20px 0;
+            padding: 10px;
+            background-color: #f8bbd0;
+            border-radius: 5px;
+        }
+
+        button {
+            background-color: #d32f2f;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            font-size: 1em;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        button:hover {
+            background-color: #b71c1c;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        .rain {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: -1;
+        }
+
+        .tear {
+            position: absolute;
+            background-color: rgba(66, 165, 245, 0.6);
+            border-radius: 50%;
+            pointer-events: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>BYE</h1>
+        <div class="heart broken" id="heart">❤️</div>
+        <p id="message">This isn't easy for me to say, but I think we need to go our separate ways. We've had some good times, but it's just not working anymore.</p>
+        <div class="timer" id="timer">Time since breakup: 0 seconds</div>
+        <button id="finalMessageBtn">Click for one last message</button>
+        <p id="finalMessage" class="hidden">I'll always cherish the memories we made together. I hope you find happiness.
+            i never mean to hurt u but i think the problem was my understanding i read the chats and am giving up bye :)
+        </p>
+    </div>
+
+    <div class="rain" id="rain"></div>
+
+    <script>
+        // Broken heart effect
+        const heart = document.getElementById('heart');
+        heart.addEventListener('click', function() {
+            this.classList.add('broken-heart');
+            document.body.style.backgroundColor = '#e1f5fe';
+        });
+
+        // Timer
+        const breakupTime = new Date();
+        const timer = document.getElementById('timer');
+
+        function updateTimer() {
+            const now = new Date();
+            const diff = now - breakupTime;
+            
+            const seconds = Math.floor(diff / 1000) % 60;
+            const minutes = Math.floor(diff / (1000 * 60)) % 60;
+            const hours = Math.floor(diff / (1000 * 60 * 60)) % 24;
+            const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+            
+            timer.textContent = `Time since breakup: ${days}d ${hours}h ${minutes}m ${seconds}s`;
+        }
+
+        setInterval(updateTimer, 1000);
+
+        // Final message
+        const finalMessageBtn = document.getElementById('finalMessageBtn');
+        const finalMessage = document.getElementById('finalMessage');
+
+        finalMessageBtn.addEventListener('click', function() {
+            finalMessage.classList.remove('hidden');
+            this.classList.add('hidden');
+            createRain();
+        });
+
+        // Rain effect
+        function createRain() {
+            const rain = document.getElementById('rain');
+            rain.innerHTML = '';
+            
+            for (let i = 0; i < 50; i++) {
+                setTimeout(() => {
+                    const tear = document.createElement('div');
+                    tear.classList.add('tear');
+                    
+                    const size = Math.random() * 10 + 5;
+                    tear.style.width = `${size}px`;
+                    tear.style.height = `${size}px`;
+                    
+                    tear.style.left = `${Math.random() * 100}vw`;
+                    tear.style.top = '-20px';
+                    
+                    rain.appendChild(tear);
+                    
+                    const animationDuration = Math.random() * 2 + 1;
+                    tear.style.animation = `fall ${animationDuration}s linear forwards`;
+                    
+                    // Create keyframes for falling animation
+                    const style = document.createElement('style');
+                    style.innerHTML = `
+                        @keyframes fall {
+                            to {
+                                transform: translateY(100vh);
+                                opacity: 0;
+                            }
+                        }
+                    `;
+                    document.head.appendChild(style);
+                    
+                    // Remove tear after animation
+                    setTimeout(() => {
+                        tear.remove();
+                    }, animationDuration * 1000);
+                }, Math.random() * 2000);
+            }
+        }
+
+        // Cycle through messages
+        const messages = [
+            "I'll always cherish what we had, but it's time to move on.",
+            "We've grown apart, and that's okay. People change.",
+            "I hope you find someone who makes you as happy as you deserve to be.",
+            "This isn't a failure - it's just our story taking a different path.",
+            "Thank you for the memories. I'll carry them with me."
+        ];
+
+        const messageElement = document.getElementById('message');
+        let currentMessage = 0;
+
+        setInterval(() => {
+            currentMessage = (currentMessage + 1) % messages.length;
+            messageElement.style.opacity = 0;
+            
+            setTimeout(() => {
+                messageElement.textContent = messages[currentMessage];
+                messageElement.style.opacity = 1;
+            }, 500);
+        }, 5000);
+    </script>
+</body>
+</html>
